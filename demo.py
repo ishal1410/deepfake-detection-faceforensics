@@ -65,6 +65,8 @@ def predict_video(video_path):
     print(f"Confidence: {confidence:.2f}%")
     print(f"Fake probability: {avg_prob*100:.2f}%")
 
-# Run
+# Example paths:
+# Real video: C:\Users\vp141\Downloads\FF_Dataset\original_sequences\youtube\c23\videos\033.mp4
+# Fake video: C:\Users\vp141\Downloads\FF_Dataset\manipulated_sequences\Deepfakes\c23\videos\033_097.mp4
 video_path = input("Enter video path: ")
 predict_video(video_path)

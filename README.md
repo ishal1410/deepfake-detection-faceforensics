@@ -124,6 +124,39 @@ The demo uses the Equal Weighted Ensemble (0.5/0.5) to classify a video as **REA
 
 ---
 
+## Updates & New Features (Final Submission)
+
+### 1. Ensemble Optimization
+- Updated from 0.6/0.4 to Equal Ensemble (0.5/0.5) — found optimal through sensitivity analysis
+- Achieves best accuracy of 95.33% on FaceForensics++ test set
+
+### 2. Ensemble Weight Sensitivity Analysis
+- Tested 6 weight combinations from 0.3/0.7 to 0.8/0.2
+- Generated comparison graph showing accuracy and AUC for each combination
+- Confirmed 0.5/0.5 as optimal weighting
+
+### 3. Background Masking
+- Implemented elliptical background masking after MTCNN face extraction
+- Removes background pixels — forces model to focus purely on facial boundary artifacts
+- Visual comparison of original vs masked faces included
+
+### 4. Cross-Dataset Validation on Celeb-DF v2
+- Tested ensemble on 10 real + 10 fake videos from Celeb-DF v2
+- Used domain-adapted threshold of 0.35 for higher quality fakes
+- Achieved 75.00% accuracy — demonstrates generalization challenge
+
+### 5. Extended Grad-CAM Analysis
+- Added Grad-CAM on Celeb-DF failed cases
+- Shows why model struggles with high-quality unseen fakes
+- Reveals diffuse activation patterns vs focused artifact regions in FF++
+
+### 6. Real-Time Grad-CAM Video Overlay
+- Added live heatmap overlay directly on video frames
+- Displays prediction label, confidence score, and Grad-CAM activation in real time
+- Output videos saved for both real and fake samples
+
+---
+
 ## Repository Contents
 
 | File | Description |

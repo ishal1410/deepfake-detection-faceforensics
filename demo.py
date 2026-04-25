@@ -47,7 +47,8 @@ def predict_video(video_path):
             
             prob_xception = xception_model.predict(face_input, verbose=0)[0][0]
             prob_eff = efficientnet_model.predict(face_input, verbose=0)[0][0]
-            prob_ensemble = (0.6 * prob_xception) + (0.4 * prob_eff)
+            # Equal ensemble — 0.5/0.5 found optimal through sensitivity analysis
+            prob_ensemble = (0.5 * prob_xception) + (0.5 * prob_eff)
             predictions.append(prob_ensemble)
     
     cap.release()

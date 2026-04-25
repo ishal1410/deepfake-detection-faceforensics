@@ -141,7 +141,8 @@ The demo uses the Equal Weighted Ensemble (0.5/0.5) to classify a video as **REA
 - Visual comparison of original vs masked faces included
 
 ### 4. Cross-Dataset Validation on Celeb-DF v2
-- Tested ensemble on 10 real + 10 fake videos from Celeb-DF v2
+- Downloaded 10 real + 10 fake videos from Celeb-DF v2
+- Dataset: https://www.kaggle.com/datasets/reubensuju/celeb-df-v2
 - Used domain-adapted threshold of 0.35 for higher quality fakes
 - Achieved 75.00% accuracy — demonstrates generalization challenge
 

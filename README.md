@@ -22,17 +22,20 @@ pip install tensorflow opencv-python dlib mtcnn scikit-learn matplotlib seaborn 
 
 ## Dataset
 
-This project uses the **FaceForensics++ Low Quality (c23)** dataset.
-
+### FaceForensics++ (Primary Dataset)
 1. Fill out the access request form at: https://github.com/ondyari/FaceForensics
-2. Once approved, you will receive a download script via email
-3. Use the download script to download the following c23 compression folders:
+2. Once approved, download the following c23 compression folders:
    - `original_sequences/youtube/c23/videos/`
    - `manipulated_sequences/Deepfakes/c23/videos/`
    - `manipulated_sequences/Face2Face/c23/videos/`
    - `manipulated_sequences/FaceSwap/c23/videos/`
    - `manipulated_sequences/NeuralTextures/c23/videos/`
-4. Organize everything under one root folder, e.g. `FF_Dataset/`
+3. Organize everything under one root folder, e.g. `FF_Dataset/`
+
+### Celeb-DF v2 (Cross-Dataset Validation)
+Used for cross-dataset generalization testing in the final project.
+- Download from Kaggle: https://www.kaggle.com/datasets/reubensuju/celeb-df-v2
+- Place real videos in `Celeb_DF/real/` and fake videos in `Celeb_DF/fake/`
 
 ---
 
@@ -40,7 +43,7 @@ This project uses the **FaceForensics++ Low Quality (c23)** dataset.
 
 Download the dlib 68-point facial landmark predictor:
 - Link: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-- Extract the `.bz2` file and place `shape_predictor_68_face_landmarks.dat` inside your `FF_Dataset/` folder
+- Extract and place `shape_predictor_68_face_landmarks.dat` inside your `FF_Dataset/` folder
 
 ---
 
@@ -54,8 +57,6 @@ Download all 4 pretrained models from Google Drive and place them inside your `F
 | `efficientnet_model.h5` | EfficientNet-B0 with Spatial Attention | [Download](https://drive.google.com/file/d/1MVWjkzzfjYp2ek8dibgDfUXdJXW2r3Gd/view?usp=sharing) |
 | `svm_model.pkl` | FFT + SVM baseline | [Download](https://drive.google.com/file/d/1GHKqGyTXiUJyFXV1LOQK0nUyvomYTou_/view?usp=sharing) |
 | `rf_model.pkl` | dlib + Random Forest baseline | [Download](https://drive.google.com/file/d/1H-1ciqhQRTtgLheivX31K25MlRWTz3mN/view?usp=sharing) |
-
-> If you prefer to train the models yourself, skip this step and run the full notebook - models will be trained and saved automatically.
 
 ---
 
@@ -90,22 +91,36 @@ Run all cells in `deepfake_detection.ipynb` from top to bottom. The notebook inc
 - dlib + Random Forest baseline model
 - Xception deep learning model (two-stage fine-tuning)
 - EfficientNet-B0 with Spatial Attention Module
-- Trust-Aware Weighted Ensemble
+- Equal Weighted Ensemble (0.5/0.5) — optimal weights found via sensitivity analysis
+- Ensemble Weight Sensitivity Analysis
+- Background Masking for aggressive face cropping
 - Grad-CAM explainability (correct predictions + failed cases)
 - Per-manipulation type analysis
+- Cross-dataset validation on Celeb-DF v2
+- Grad-CAM on Celeb-DF failed cases
+- Real-time Grad-CAM video overlay
 
-> **Smart Skip Logic:** Training cells automatically skip if a saved model already exists in your `FF_Dataset/` folder. To retrain any model from scratch, delete the corresponding file:
-> - `svm_model.pkl` - FFT + SVM
-> - `rf_model.pkl` - Random Forest
-> - `xception_model.h5` - Xception
-> - `efficientnet_model.h5` - EfficientNet-B0
+> **Smart Skip Logic:** Training cells automatically skip if a saved model already exists. To retrain, delete the corresponding file.
 
 ### Option 2 - Demo Script
 After models are in place, run the demo on any video:
 ```bash
 python demo.py
 ```
-The demo uses the Trust-Aware Weighted Ensemble to classify a video as **REAL** or **FAKE** with a confidence score.
+The demo uses the Equal Weighted Ensemble (0.5/0.5) to classify a video as **REAL** or **FAKE** with a confidence score.
+
+---
+
+## Results Summary
+
+| Model | Accuracy | AUC |
+|-------|----------|-----|
+| FFT + SVM | 75.33% | 0.8124 |
+| dlib + Random Forest | 76.74% | 0.8694 |
+| Xception | 92.67% | 0.9881 |
+| EfficientNet-B0 + Spatial Attention | 89.33% | 0.9611 |
+| Equal Ensemble (0.5/0.5) | **95.33%** | **0.9767** |
+| Celeb-DF Cross-Dataset | 75.00% | — |
 
 ---
 
@@ -116,14 +131,19 @@ The demo uses the Trust-Aware Weighted Ensemble to classify a video as **REAL** 
 | `deepfake_detection.ipynb` | Main notebook - all 5 models, analysis, and Grad-CAM |
 | `demo.py` | Real-time video classification demo |
 | `efficientnet_confusion_matrix.png` | EfficientNet-B0 confusion matrix |
-| `ensemble_confusion_matrix.png` | Ensemble confusion matrix |
+| `ensemble_confusion_matrix.png` | Equal Ensemble (0.5/0.5) confusion matrix |
 | `xception_confusion_matrix.png` | Xception confusion matrix |
 | `svm_confusion_matrix.png` | FFT+SVM confusion matrix |
 | `rf_confusion_matrix.png` | Random Forest confusion matrix |
 | `gradcam_heatmaps.png` | Grad-CAM on correct predictions |
-| `gradcam_failed_cases.png` | Grad-CAM on failed predictions |
+| `gradcam_failed_cases.png` | Grad-CAM on FF++ failed predictions |
+| `gradcam_celebdf_failed.png` | Grad-CAM on Celeb-DF failed predictions |
 | `model_comparison.png` | Accuracy comparison across all models |
 | `face_extraction_sample.png` | Sample MTCNN face extraction output |
 | `xception_training_curves.png` | Xception training accuracy/loss curves |
+| `ensemble_sensitivity.png` | Ensemble weight sensitivity analysis graph |
+| `background_masking_sample.png` | Background masking comparison |
+| `gradcam_real_output.mp4` | Real-time Grad-CAM overlay on real video |
+| `gradcam_fake_output.mp4` | Real-time Grad-CAM overlay on fake video |
 
 > **Note:** All pretrained models are hosted on Google Drive. Dataset videos and extracted face images are not included due to size.
